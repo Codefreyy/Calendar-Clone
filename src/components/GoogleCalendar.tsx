@@ -10,11 +10,11 @@ import {
   isSameMonth,
   isToday,
 } from "date-fns"
-import EventList from "./EventList"
 import AddEventModal from "./AddEventModal"
 
 interface DateProps {
   value: Date
+  onChange: (date: Date) => void
 }
 
 function GoogleCalendar({ value }: DateProps) {
