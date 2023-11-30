@@ -1,5 +1,5 @@
 import { format } from "date-fns"
-import { useState } from "react"
+import { ChangeEvent, FormEvent, useState } from "react"
 
 interface AddEventProps {
   onModalCancel: () => void
@@ -25,6 +25,37 @@ function AddEventModal({ onModalCancel, clickDate }: AddEventProps) {
     color: "RED",
   })
 
+  function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    if (eventFormData.startTime > eventFormData.endTime) {
+      // todo: show alert/hint message
+      return
+    }
+  }
+
+  function handleTimeChange(e: ChangeEvent<HTMLInputElement>) {
+    const [hours, minutes] = e.target.value.split(":")
+    const newDate = new Date(clickDate)
+    newDate.setHours(parseInt(hours, 10))
+    newDate.setMinutes(parseInt(minutes, 10))
+    console.log(e.target.id)
+    if (e.target.id == "start-time") {
+      setEventFormData((preState) => {
+        return {
+          ...preState,
+          startTime: newDate,
+        }
+      })
+    } else {
+      setEventFormData((preState) => {
+        return {
+          ...preState,
+          endTime: newDate,
+        }
+      })
+    }
+  }
+
   return (
     <div className="modal">
       <div className="overlay"></div>
@@ -36,10 +67,10 @@ function AddEventModal({ onModalCancel, clickDate }: AddEventProps) {
             &times;
           </button>
         </div>
-        <form>
+        <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="name">Name</label>
-            <input type="text" name="name" id="name" />
+            <input type="text" name="name" id="name" required />
           </div>
           <div className="form-group checkbox">
             <input
@@ -55,7 +86,6 @@ function AddEventModal({ onModalCancel, clickDate }: AddEventProps) {
                     allDay: isAllday,
                   }
                 })
-                console.log(eventFormData)
               }}
             />
             <label htmlFor="all-day">All Day?</label>
@@ -63,11 +93,25 @@ function AddEventModal({ onModalCancel, clickDate }: AddEventProps) {
           <div className="row">
             <div className="form-group">
               <label htmlFor="start-time">Start Time</label>
-              <input type="time" name="start-time" id="start-time" />
+              <input
+                type="time"
+                name="start-time"
+                id="start-time"
+                disabled={eventFormData.allDay}
+                required={!eventFormData.allDay}
+                onChange={handleTimeChange}
+              />
             </div>
             <div className="form-group">
               <label htmlFor="end-time">End Time</label>
-              <input type="time" name="end-time" id="end-time" />
+              <input
+                type="time"
+                name="end-time"
+                id="end-time"
+                disabled={eventFormData.allDay}
+                required={!eventFormData.allDay}
+                onChange={handleTimeChange}
+              />
             </div>
           </div>
           <div className="form-group">

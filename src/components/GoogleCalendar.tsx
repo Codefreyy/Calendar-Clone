@@ -22,6 +22,7 @@ function GoogleCalendar({ value }: DateProps) {
   const [isAddEventModalOpen, setIsAddEventModalOpen] = useState(false)
   const [clickDate, setClickDate] = useState<Date>(new Date())
 
+  // calendar's one-page view data
   const visibleDates = eachDayOfInterval({
     start: startOfWeek(startOfMonth(visibleMonth)),
     end: endOfWeek(endOfMonth(visibleMonth)),
