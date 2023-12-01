@@ -11,6 +11,7 @@ import {
   isToday,
   isBefore,
   endOfDay,
+  subMonths,
 } from "date-fns"
 import AddEventModal from "./AddEventModal"
 import { formatDate } from "../utils/formatDate"
@@ -34,34 +35,26 @@ function Calendar({ value }: DateProps) {
     })
   }, [selectedMonth])
 
-  function showPrevMonth() {
-    setSelectedMonth((currentMonth: Date) => {
-      return addMonths(currentMonth, -1)
-    })
-  }
-
-  function showNextMonth() {
-    setSelectedMonth((currentMonth: Date) => {
-      return addMonths(currentMonth, 1)
-    })
-  }
-
-  function jumpToCurrentMonth() {
-    setSelectedMonth(value)
-  }
-
   return (
     <>
       <div className="calendar">
         <div className="header">
-          <button className="btn" onClick={jumpToCurrentMonth}>
+          <button className="btn" onClick={() => setSelectedMonth(new Date())}>
             Today
           </button>
           <div>
-            <button className="month-change-btn" onClick={showPrevMonth}>
+            <button
+              className="month-change-btn"
+              onClick={() => {
+                setSelectedMonth((m) => subMonths(m, 1))
+              }}
+            >
               &lt;
             </button>
-            <button className="month-change-btn" onClick={showNextMonth}>
+            <button
+              className="month-change-btn"
+              onClick={() => setSelectedMonth((m) => addMonths(m, 1))}
+            >
               &gt;
             </button>
           </div>
