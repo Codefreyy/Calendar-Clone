@@ -1,11 +1,11 @@
 import { useState } from "react"
-import GoogleCalendar from "./components/GoogleCalendar"
+import Calendar from "./components/Calendar"
 
 function App() {
   const [value, setValue] = useState<Date>(new Date())
   return (
     <>
-      <GoogleCalendar value={value} onChange={setValue} />
+      <Calendar value={value} onChange={setValue} />
     </>
   )
 }
