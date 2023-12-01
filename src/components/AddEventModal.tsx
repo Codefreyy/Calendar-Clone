@@ -122,7 +122,7 @@ function AddEventModal({ onModalCancel, clickDate }: AddEventProps) {
                 name="color"
                 value="blue"
                 id="blue"
-                checked
+                // checked
                 className="color-radio"
               />
               <label htmlFor="blue">

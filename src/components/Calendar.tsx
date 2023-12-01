@@ -59,7 +59,8 @@ function Calendar({ value }: DateProps) {
             </button>
           </div>
           <span className="month-title">
-            {selectedMonth && format(selectedMonth, "MMM yyyy")}
+            {selectedMonth &&
+              formatDate(selectedMonth, { month: "long", year: "numeric" })}
           </span>
         </div>
         <div className="days">
@@ -70,6 +71,9 @@ function Calendar({ value }: DateProps) {
               day={day}
               showWeekName={index < 7}
               selectedMonth={selectedMonth}
+              setClickDate={setClickDate}
+              setIsAddEventModalOpen={setIsAddEventModalOpen}
+              isAddEventModalOpen={isAddEventModalOpen}
             />
           ))}
         </div>
@@ -89,9 +93,19 @@ type calendarDayType = {
   day: Date
   showWeekName: boolean
   selectedMonth: Date
+  setClickDate: (day: Date) => void
+  setIsAddEventModalOpen: (isAddEventModalOpen: boolean) => void
+  isAddEventModalOpen: boolean
 }
 
-function CalendarDay({ day, showWeekName, selectedMonth }: calendarDayType) {
+function CalendarDay({
+  day,
+  showWeekName,
+  selectedMonth,
+  setClickDate,
+  setIsAddEventModalOpen,
+  isAddEventModalOpen,
+}: calendarDayType) {
   return (
     <div
       key={day.getTime()}
