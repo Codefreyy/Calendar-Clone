@@ -1,11 +1,4 @@
-import {
-  ChangeEvent,
-  FormEvent,
-  Fragment,
-  useId,
-  useMemo,
-  useState,
-} from "react"
+import { Fragment, useId, useMemo, useState } from "react"
 import {
   addMonths,
   eachDayOfInterval,
@@ -13,7 +6,6 @@ import {
   endOfWeek,
   startOfMonth,
   endOfMonth,
-  format,
   isSameMonth,
   isToday,
   isBefore,
@@ -30,8 +22,6 @@ import { EVENTS_COLORS } from "../context/useEvents"
 
 function Calendar() {
   const [selectedMonth, setSelectedMonth] = useState(new Date())
-  const [isEventModalOpen, setIsEventModalOpen] = useState(false)
-  const [clickDate, setClickDate] = useState<Date>(new Date())
 
   // calendar's one-page view data
   const visibleDates = useMemo(() => {
@@ -77,9 +67,6 @@ function Calendar() {
               day={day}
               showWeekName={index < 7}
               selectedMonth={selectedMonth}
-              setClickDate={setClickDate}
-              setIsEventModalOpen={setIsEventModalOpen}
-              isEventModalOpen={isEventModalOpen}
             />
           ))}
         </div>
@@ -94,19 +81,10 @@ type calendarDayType = {
   day: Date
   showWeekName: boolean
   selectedMonth: Date
-  setClickDate: (day: Date) => void
-  setIsEventModalOpen: (isAddEventModalOpen: boolean) => void
-  isEventModalOpen: boolean
 }
 
-function CalendarDay({
-  day,
-  showWeekName,
-  selectedMonth,
-  setClickDate,
-  setIsEventModalOpen,
-  isEventModalOpen,
-}: calendarDayType) {
+function CalendarDay({ day, showWeekName, selectedMonth }: calendarDayType) {
+  const [isEventModalOpen, setIsEventModalOpen] = useState(false)
   return (
     <div
       key={day.getTime()}
@@ -128,7 +106,6 @@ function CalendarDay({
         <button
           className="add-event-btn"
           onClick={() => {
-            setClickDate(day)
             setIsEventModalOpen(true)
           }}
         >
