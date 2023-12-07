@@ -11,6 +11,8 @@ import {
   isBefore,
   endOfDay,
   subMonths,
+  isSameDay,
+  parse,
 } from "date-fns"
 import { formatDate } from "../utils/formatDate"
 import { cc } from "../utils/cc"
@@ -18,10 +20,11 @@ import { Modal } from "./Modal"
 import { UnionOmit } from "../utils/type"
 import { ModalProps } from "./Modal"
 import { Event } from "../context/Events"
-import { EVENTS_COLORS } from "../context/useEvents"
+import { EVENTS_COLORS, useEvents } from "../context/useEvents"
 
 function Calendar() {
   const [selectedMonth, setSelectedMonth] = useState(new Date())
+  const { events } = useEvents()
 
   // calendar's one-page view data
   const visibleDates = useMemo(() => {
@@ -63,6 +66,9 @@ function Calendar() {
           {visibleDates.map((day, index) => (
             // old-month-day non-month-day
             <CalendarDay
+              events={events.filter((event: Event) =>
+                isSameDay(event.date, day)
+              )}
               key={day.getTime()}
               day={day}
               showWeekName={index < 7}
@@ -70,8 +76,6 @@ function Calendar() {
             />
           ))}
         </div>
-
-        {/* <EventFormModal/> */}
       </div>
     </>
   )
@@ -81,10 +85,34 @@ type calendarDayType = {
   day: Date
   showWeekName: boolean
   selectedMonth: Date
+  events: Event[]
 }
 
-function CalendarDay({ day, showWeekName, selectedMonth }: calendarDayType) {
+function CalendarDay({
+  day,
+  showWeekName,
+  selectedMonth,
+  events,
+}: calendarDayType) {
   const [isEventModalOpen, setIsEventModalOpen] = useState(false)
+  const { addEvents } = useEvents()
+  const sortedEvents = useMemo(() => {
+    const timeToNumber = (time: string) => parseFloat(time.replace(":", "."))
+
+    return [...events].sort((a, b) => {
+      if (a.allDay && b.allDay) {
+        return 0
+      } else if (a.allDay) {
+        return -1
+      } else if (b.allDay) {
+        return 1
+      } else {
+        return timeToNumber(a.startTime) - timeToNumber(b.startTime)
+      }
+    })
+
+    console.log("sorted", sortedEvents)
+  }, [events])
   return (
     <div
       key={day.getTime()}
@@ -112,13 +140,43 @@ function CalendarDay({ day, showWeekName, selectedMonth }: calendarDayType) {
           +
         </button>
       </div>
+      <div className="events">
+        {sortedEvents.map((event) => {
+          return <CalenderEvent event={event} key={event.id} />
+        })}
+      </div>
+
       <EventFormModal
         date={day}
         isOpen={isEventModalOpen}
         onClose={() => setIsEventModalOpen(false)}
-        onSubmit={() => null}
+        onSubmit={(e) => {
+          addEvents(e)
+        }}
       />
     </div>
+  )
+}
+
+function CalenderEvent({ event }: { event: Event }) {
+  return (
+    <button
+      className={`event ${event.allDay ? "all-day-event" : ""} ${event.color}`}
+    >
+      {event.allDay ? (
+        <div className="event-name">{event.name}</div>
+      ) : (
+        <>
+          <div className={`color-dot ${event.color}`}></div>
+          <div className="event-time">
+            {formatDate(parse(event.startTime, "HH:mm", event.date), {
+              timeStyle: "short",
+            })}
+          </div>
+          <div className="event-name">{event.name}</div>
+        </>
+      )}
+    </button>
   )
 }
 
@@ -188,6 +246,7 @@ function EventFormModal({
       }
     }
 
+    modalProps.onClose()
     onSubmit(newEvent)
     console.log("newEvent", newEvent)
   }
