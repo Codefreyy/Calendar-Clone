@@ -1,4 +1,4 @@
-import { Fragment, useId, useMemo, useState } from "react"
+import { FormEvent, Fragment, useId, useMemo, useRef, useState } from "react"
 import {
   addMonths,
   eachDayOfInterval,
@@ -143,12 +143,54 @@ function EventFormModal({
   ...modalProps
 }: EventFormModalProps) {
   const [isNew, setIsNew] = useState(true)
+  const [startTime, setStartTime] = useState(event?.startTime || "")
   const [isAlldayChecked, setIsAlldayChecked] = useState(false)
   const [selectedColor, setSelectedColor] = useState(
     event?.color || EVENTS_COLORS[0]
   )
-  const [startTime, setStartTime] = useState(event?.startTime || "")
+  const nameRef = useRef<HTMLInputElement>(null)
+  const endTimeRef = useRef<HTMLInputElement>(null)
+
   const formId = useId()
+
+  function handleFormSubmit(e: FormEvent) {
+    e.preventDefault()
+    const name = nameRef.current?.value || ""
+    const endTime = endTimeRef.current?.value || ""
+
+    if (name == null || name == "") return
+
+    const commonProps = {
+      name,
+      date: date || event?.date,
+      color: selectedColor,
+    }
+
+    let newEvent: UnionOmit<Event, "id">
+
+    if (isAlldayChecked) {
+      newEvent = {
+        ...commonProps,
+        allDay: true,
+      }
+    } else if (
+      (startTime == null && startTime == "") ||
+      endTime == null ||
+      endTime == ""
+    ) {
+      return
+    } else {
+      newEvent = {
+        ...commonProps,
+        allDay: false,
+        startTime: startTime,
+        endTime: endTime,
+      }
+    }
+
+    onSubmit(newEvent)
+    console.log("newEvent", newEvent)
+  }
 
   return (
     <Modal {...modalProps}>
@@ -159,15 +201,14 @@ function EventFormModal({
           &times;
         </button>
       </div>
-      <form>
+      <form onSubmit={handleFormSubmit}>
         <div className="form-group">
           <label htmlFor={`${formId}-name`}>Name</label>
-          <input type="text" name="name" id={`${formId}-name`} required />
+          <input type="text" ref={nameRef} id={`${formId}-name`} required />
         </div>
         <div className="form-group checkbox">
           <input
             type="checkbox"
-            name="all-day"
             id="all-day"
             checked={isAlldayChecked}
             onChange={(e) => setIsAlldayChecked(e.target.checked)}
@@ -181,7 +222,6 @@ function EventFormModal({
               value={startTime}
               onChange={(e) => setStartTime(e.target.value)}
               type="time"
-              name="start-time"
               id={`${formId}-start-time`}
               disabled={isAlldayChecked}
               required={!isAlldayChecked}
@@ -192,7 +232,7 @@ function EventFormModal({
             <input
               min={startTime}
               type="time"
-              name="end-time"
+              ref={endTimeRef}
               id={`${formId}-end-time`}
               disabled={isAlldayChecked}
               required={!isAlldayChecked}
@@ -224,7 +264,7 @@ function EventFormModal({
           <button className="btn btn-success" type="submit">
             Add
           </button>
-          <button className="btn btn-delete" type="button">
+          <button className="btn btn-delete" type="button" onClick={onDelete}>
             Delete
           </button>
         </div>

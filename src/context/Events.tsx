@@ -7,9 +7,10 @@ export type Event = {
   date: Date
   name: string
   color: (typeof EVENTS_COLORS)[number]
-  startTime: ""
-  endTime: ""
-}
+} & (
+  | { allDay: true; starTime?: never; endTime?: never }
+  | { allDay: false; startTime: string; endTime: string }
+)
 
 type EventsContext = {
   events: Event[]
