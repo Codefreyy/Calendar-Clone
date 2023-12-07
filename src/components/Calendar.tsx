@@ -142,42 +142,13 @@ function EventFormModal({
   date,
   ...modalProps
 }: EventFormModalProps) {
-  const [isNew, setIsNew] = useState(false)
+  const [isNew, setIsNew] = useState(true)
   const [isAlldayChecked, setIsAlldayChecked] = useState(false)
   const [selectedColor, setSelectedColor] = useState(
     event?.color || EVENTS_COLORS[0]
   )
+  const [startTime, setStartTime] = useState(event?.startTime || "")
   const formId = useId()
-  // function handleSubmit(e: FormEvent<HTMLFormElement>) {
-  //   e.preventDefault()
-  //   if (event.startTime > event.endTime) {
-  //     // todo: show alert/hint message
-  //     return
-  //   }
-  // }
-
-  // function handleTimeChange(e: ChangeEvent<HTMLInputElement>) {
-  //   const [hours, minutes] = e.target.value.split(":")
-  //   const newDate = new Date(date || event.date)
-  //   newDate.setHours(parseInt(hours, 10))
-  //   newDate.setMinutes(parseInt(minutes, 10))
-  //   console.log(e.target.id)
-  //   if (e.target.id == "start-time") {
-  //     setevent((preState) => {
-  //       return {
-  //         ...preState,
-  //         startTime: newDate,
-  //       }
-  //     })
-  //   } else {
-  //     setevent((preState) => {
-  //       return {
-  //         ...preState,
-  //         endTime: newDate,
-  //       }
-  //     })
-  //   }
-  // }
 
   return (
     <Modal {...modalProps}>
@@ -207,6 +178,8 @@ function EventFormModal({
           <div className="form-group">
             <label htmlFor={`${formId}-start-time`}>Start Time</label>
             <input
+              value={startTime}
+              onChange={(e) => setStartTime(e.target.value)}
               type="time"
               name="start-time"
               id={`${formId}-start-time`}
@@ -217,6 +190,7 @@ function EventFormModal({
           <div className="form-group">
             <label htmlFor={`${formId}-end-time`}>End Time</label>
             <input
+              min={startTime}
               type="time"
               name="end-time"
               id={`${formId}-end-time`}

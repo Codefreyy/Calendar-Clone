@@ -7,6 +7,8 @@ export type Event = {
   date: Date
   name: string
   color: (typeof EVENTS_COLORS)[number]
+  startTime: ""
+  endTime: ""
 }
 
 type EventsContext = {
