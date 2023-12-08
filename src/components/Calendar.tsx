@@ -200,8 +200,10 @@ function EventFormModal({
   date,
   ...modalProps
 }: EventFormModalProps) {
-  const [isNew, setIsNew] = useState(true)
-  const [startTime, setStartTime] = useState(event?.startTime || "")
+  // const [isNew, setIsNew] = useState(true)
+  const [startTime, setStartTime] = useState<string>(
+    (event && !event.allDay && event.startTime) || ""
+  )
   const [isAlldayChecked, setIsAlldayChecked] = useState(false)
   const [selectedColor, setSelectedColor] = useState(
     event?.color || EVENTS_COLORS[0]
@@ -254,7 +256,8 @@ function EventFormModal({
   return (
     <Modal {...modalProps}>
       <div className="modal-title">
-        <div>{isNew ? "Add Event" : "Edit Event"}</div>
+        {/* <div>{isNew ? "Add Event" : "Edit Event"}</div> */}
+        <div>Add Event</div>
         <small>{formatDate(date || event.date, { dateStyle: "short" })}</small>
         <button className="close-btn" onClick={modalProps.onClose}>
           &times;
