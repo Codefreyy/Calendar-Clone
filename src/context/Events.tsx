@@ -15,6 +15,8 @@ export type Event = {
 type EventsContext = {
   events: Event[]
   addEvents: (event: UnionOmit<Event, "id">) => void
+  deleteEvent: (id: string) => void
+  updateEvent: (eventId: string, event: UnionOmit<Event, "id">) => void
 }
 
 export const Context = createContext<EventsContext | null>(null)
@@ -38,8 +40,29 @@ export function EventsProvider({ children }: EventsContextProps) {
     })
   }
 
+  function deleteEvent(id: string) {
+    setEvents((events) => {
+      return events.filter((eve) => eve.id !== id)
+    })
+  }
+
+  function updateEvent(eventId: string, event: UnionOmit<Event, "id">) {
+    console.log(event, "updated")
+    setEvents((e) => {
+      return e.map((eve) => {
+        if (eve.id == eventId) {
+          eve = {
+            id: eventId,
+            ...event,
+          }
+        }
+        return eve
+      })
+    })
+  }
+
   return (
-    <Context.Provider value={{ events, addEvents }}>
+    <Context.Provider value={{ events, addEvents, deleteEvent, updateEvent }}>
       {children}
     </Context.Provider>
   )

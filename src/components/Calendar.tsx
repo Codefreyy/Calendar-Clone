@@ -110,8 +110,6 @@ function CalendarDay({
         return timeToNumber(a.startTime) - timeToNumber(b.startTime)
       }
     })
-
-    console.log("sorted", sortedEvents)
   }, [events])
   return (
     <div
@@ -145,7 +143,6 @@ function CalendarDay({
           return <CalenderEvent event={event} key={event.id} />
         })}
       </div>
-
       <EventFormModal
         date={day}
         isOpen={isEventModalOpen}
@@ -159,24 +156,41 @@ function CalendarDay({
 }
 
 function CalenderEvent({ event }: { event: Event }) {
+  const [isEditModalOpen, setEditModalOpen] = useState(false)
+  const { deleteEvent, updateEvent } = useEvents()
+
   return (
-    <button
-      className={`event ${event.allDay ? "all-day-event" : ""} ${event.color}`}
-    >
-      {event.allDay ? (
-        <div className="event-name">{event.name}</div>
-      ) : (
-        <>
-          <div className={`color-dot ${event.color}`}></div>
-          <div className="event-time">
-            {formatDate(parse(event.startTime, "HH:mm", event.date), {
-              timeStyle: "short",
-            })}
-          </div>
+    <>
+      <button
+        className={`event ${event.allDay ? "all-day-event" : ""} ${
+          event.color
+        }`}
+        onClick={() => setEditModalOpen(true)}
+      >
+        {event.allDay ? (
           <div className="event-name">{event.name}</div>
-        </>
-      )}
-    </button>
+        ) : (
+          <>
+            <div className={`color-dot ${event.color}`}></div>
+            <div className="event-time">
+              {formatDate(parse(event.startTime, "HH:mm", event.date), {
+                timeStyle: "short",
+              })}
+            </div>
+            <div className="event-name">{event.name}</div>
+          </>
+        )}
+      </button>
+      <EventFormModal
+        isOpen={isEditModalOpen}
+        onClose={() => setEditModalOpen(false)}
+        onSubmit={(e) => {
+          updateEvent(event.id, e)
+        }}
+        onDelete={() => deleteEvent(event.id)}
+        event={event}
+      />
+    </>
   )
 }
 
@@ -184,14 +198,15 @@ function CalenderEvent({ event }: { event: Event }) {
 type EventFormModalProps = {
   onSubmit: (event: UnionOmit<Event, "id">) => void
 } & (
-  | { onDelete: () => void; event: Event; date?: never }
+  | { onDelete: (e: Event) => void; event: Event; date?: never }
+  // either "onDelete and event " or "date"
   | {
       onDelete?: never
       event?: never
       date: Date
     }
 ) &
-  Omit<ModalProps, "children">
+  Omit<ModalProps, "children"> // isOpen, onClose
 
 function EventFormModal({
   onSubmit,
@@ -200,18 +215,20 @@ function EventFormModal({
   date,
   ...modalProps
 }: EventFormModalProps) {
-  // const [isNew, setIsNew] = useState(true)
   const [startTime, setStartTime] = useState<string>(
     (event && !event.allDay && event.startTime) || ""
   )
-  const [isAlldayChecked, setIsAlldayChecked] = useState(false)
+  const [isAlldayChecked, setIsAlldayChecked] = useState(event?.allDay || false)
   const [selectedColor, setSelectedColor] = useState(
     event?.color || EVENTS_COLORS[0]
   )
   const nameRef = useRef<HTMLInputElement>(null)
   const endTimeRef = useRef<HTMLInputElement>(null)
-
   const formId = useId()
+
+  // useEffect(() => {
+  //   nameRef.current?.value = event.value
+  // }, [])
 
   function handleFormSubmit(e: FormEvent) {
     e.preventDefault()
@@ -250,14 +267,12 @@ function EventFormModal({
 
     modalProps.onClose()
     onSubmit(newEvent)
-    console.log("newEvent", newEvent)
   }
 
   return (
     <Modal {...modalProps}>
       <div className="modal-title">
-        {/* <div>{isNew ? "Add Event" : "Edit Event"}</div> */}
-        <div>Add Event</div>
+        <div>{date ? "Add Event" : "Edit Event"}</div>
         <small>{formatDate(date || event.date, { dateStyle: "short" })}</small>
         <button className="close-btn" onClick={modalProps.onClose}>
           &times;
@@ -266,7 +281,13 @@ function EventFormModal({
       <form onSubmit={handleFormSubmit}>
         <div className="form-group">
           <label htmlFor={`${formId}-name`}>Name</label>
-          <input type="text" ref={nameRef} id={`${formId}-name`} required />
+          <input
+            type="text"
+            ref={nameRef}
+            id={`${formId}-name`}
+            defaultValue={event?.name}
+            required
+          />
         </div>
         <div className="form-group checkbox">
           <input
@@ -298,6 +319,7 @@ function EventFormModal({
               id={`${formId}-end-time`}
               disabled={isAlldayChecked}
               required={!isAlldayChecked}
+              defaultValue={event?.endTime}
             />
           </div>
         </div>
