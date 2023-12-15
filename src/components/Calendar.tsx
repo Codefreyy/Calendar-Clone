@@ -198,7 +198,7 @@ function CalenderEvent({ event }: { event: Event }) {
 type EventFormModalProps = {
   onSubmit: (event: UnionOmit<Event, "id">) => void
 } & (
-  | { onDelete: (e: Event) => void; event: Event; date?: never }
+  | { onDelete: () => void; event: Event; date?: never }
   // either "onDelete and event " or "date"
   | {
       onDelete?: never
