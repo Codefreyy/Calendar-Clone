@@ -1,5 +1,6 @@
-import { ReactNode, useEffect } from "react"
+import { ReactNode, useEffect, useLayoutEffect, useRef, useState } from "react"
 import { createPortal } from "react-dom"
+import { cc } from "../utils/cc"
 
 export type ModalProps = {
   children: ReactNode
@@ -8,6 +9,8 @@ export type ModalProps = {
 }
 
 export function Modal({ children, isOpen, onClose }: ModalProps) {
+  const [isClosing, setIsClosing] = useState<boolean>(false)
+  const isPrevOpen = useRef<boolean>()
   useEffect(() => {
     function handler(e: KeyboardEvent) {
       if (e.key == "Escape") onClose()
@@ -21,10 +24,24 @@ export function Modal({ children, isOpen, onClose }: ModalProps) {
     }
   }, [onClose])
 
-  if (!isOpen) return null
+  useLayoutEffect(() => {
+    if (!isOpen && isPrevOpen) {
+      setIsClosing(true)
+    }
+
+    isPrevOpen.current = isOpen
+  }, [isOpen, isPrevOpen])
+
+  if (!isOpen && !isClosing) return null
 
   return createPortal(
-    <div className="modal">
+    <div
+      // when previous Modal state is open and now it not open, we set "isClosing" to true
+      // when the animationEnd, we set isClosing to false and because:
+      // if (!isOpen && !isClosing) return null, we close the modal
+      onAnimationEnd={() => setIsClosing(false)}
+      className={cc("modal", isClosing && "closing")}
+    >
       <div className="overlay" onClick={onClose}></div>
       <div className="modal-body">{children}</div>
     </div>,
