@@ -308,7 +308,7 @@ body {
 }
 
 .modal.closing .overlay {
-  animation: fade-in 150ms forwards reverse;
+  animation: fade-in 250ms forwards reverse;
 }
 
 @keyframes fade-in {

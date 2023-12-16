@@ -9,7 +9,7 @@ export type ModalProps = {
 }
 
 export function Modal({ children, isOpen, onClose }: ModalProps) {
-  const [isClosing, setIsClosing] = useState<boolean>(false)
+  const [isClosing, setIsClosing] = useState(false)
   const isPrevOpen = useRef<boolean>()
   useEffect(() => {
     function handler(e: KeyboardEvent) {
@@ -25,7 +25,7 @@ export function Modal({ children, isOpen, onClose }: ModalProps) {
   }, [onClose])
 
   useLayoutEffect(() => {
-    if (!isOpen && isPrevOpen) {
+    if (!isOpen && isPrevOpen.current) {
       setIsClosing(true)
     }
 
