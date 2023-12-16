@@ -15,7 +15,8 @@
 }
 
 body {
-  margin: 0;
+  margin: 0 auto;
+  max-width: 1200px;
 }
 
 #root {
@@ -223,7 +224,7 @@ body {
   background: none;
   width: 100%;
   border: none;
-  font-size: 1rem;
+  font-size: 0.8rem;
   padding: 0;
 }
 
