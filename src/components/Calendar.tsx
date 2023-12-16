@@ -21,6 +21,7 @@ import { UnionOmit } from "../utils/type"
 import { ModalProps } from "./Modal"
 import { Event } from "../context/Events"
 import { EVENTS_COLORS, useEvents } from "../context/useEvents"
+import { OverflowContainer } from "./OverflowContainer"
 
 function Calendar() {
   const [selectedMonth, setSelectedMonth] = useState(new Date())
@@ -139,9 +140,15 @@ function CalendarDay({
         </button>
       </div>
       <div className="events">
-        {sortedEvents.map((event) => {
-          return <CalenderEvent event={event} key={event.id} />
-        })}
+        <OverflowContainer
+          className="events"
+          items={sortedEvents}
+          getKey={(event) => event.id}
+          renderItem={(event) => <CalenderEvent event={event} />}
+          renderOverflow={(amount) => (
+            <button className="events-view-more-btn">+{amount} More</button>
+          )}
+        />
       </div>
       <EventFormModal
         date={day}
