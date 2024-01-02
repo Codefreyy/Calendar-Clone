@@ -14,6 +14,12 @@ import {
   isSameDay,
   parse,
 } from "date-fns"
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  XMarkIcon,
+} from "@heroicons/react/16/solid"
+
 import { formatDate } from "../utils/formatDate"
 import { cc } from "../utils/cc"
 import { Modal } from "./Modal"
@@ -42,20 +48,20 @@ function Calendar() {
           <button className="btn" onClick={() => setSelectedMonth(new Date())}>
             Today
           </button>
-          <div>
+          <div className="flex gap-2">
             <button
-              className="month-change-btn"
+              className="month-change-btn "
               onClick={() => {
                 setSelectedMonth((m) => subMonths(m, 1))
               }}
             >
-              &lt;
+              <ChevronLeftIcon />
             </button>
             <button
               className="month-change-btn"
               onClick={() => setSelectedMonth((m) => addMonths(m, 1))}
             >
-              &gt;
+              <ChevronRightIcon />
             </button>
           </div>
           <span className="month-title">
@@ -191,8 +197,8 @@ function ViewMoreEventsModal({
     <Modal {...ModalProps}>
       <div className="modal-title">
         <small>{formatDate(events[0]?.date, { dateStyle: "short" })}</small>
-        <button className="close-btn" onClick={ModalProps.onClose}>
-          &times;
+        <button onClick={ModalProps.onClose}>
+          <XMarkIcon className="w-5 h-5" />
         </button>
       </div>
       <div className="events">
@@ -275,10 +281,6 @@ function EventFormModal({
   const endTimeRef = useRef<HTMLInputElement>(null)
   const formId = useId()
 
-  // useEffect(() => {
-  //   nameRef.current?.value = event.value
-  // }, [])
-
   function handleFormSubmit(e: FormEvent) {
     e.preventDefault()
     const name = nameRef.current?.value || ""
@@ -322,10 +324,12 @@ function EventFormModal({
     <Modal {...modalProps}>
       <div className="modal-title">
         <div>{date ? "Add Event" : "Edit Event"}</div>
-        <small>{formatDate(date || event.date, { dateStyle: "short" })}</small>
-        <button className="close-btn" onClick={modalProps.onClose}>
-          &times;
+        <button onClick={modalProps.onClose}>
+          <XMarkIcon className="w-5 h-5" />
         </button>
+      </div>
+      <div className="mt-[-22px] px-[1px] mb-2 font-medium">
+        <small>{formatDate(date || event.date, { dateStyle: "short" })}</small>
       </div>
       <form onSubmit={handleFormSubmit}>
         <div className="form-group">
@@ -335,7 +339,7 @@ function EventFormModal({
             ref={nameRef}
             id={`${formId}-name`}
             defaultValue={event?.name}
-            required
+            className="input"
           />
         </div>
         <div className="form-group checkbox">
@@ -343,6 +347,7 @@ function EventFormModal({
             type="checkbox"
             id="all-day"
             checked={isAlldayChecked}
+            className="input"
             onChange={(e) => setIsAlldayChecked(e.target.checked)}
           />
           <label htmlFor={`${formId}-all-day`}>All Day?</label>
@@ -357,6 +362,7 @@ function EventFormModal({
               id={`${formId}-start-time`}
               disabled={isAlldayChecked}
               required={!isAlldayChecked}
+              className="input"
             />
           </div>
           <div className="form-group">
@@ -364,6 +370,7 @@ function EventFormModal({
             <input
               min={startTime}
               type="time"
+              className="input"
               ref={endTimeRef}
               id={`${formId}-end-time`}
               disabled={isAlldayChecked}
