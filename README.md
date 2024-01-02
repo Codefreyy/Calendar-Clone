@@ -1,27 +1,9 @@
-# React + TypeScript + Vite
+# Google Calender Clone
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+<img width="1261" alt="image" src="https://github.com/Codefreyy/Calendar-Clone/assets/104683968/6dc3fedf-df12-4c42-8856-0140489ab33e">
 
-Currently, two official plugins are available:
+A calendar application similar to Google Calendar. Each day grid has a + button that allows you to create a new event for the specific day. Clicking on an event should open an edit modal.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+If the number of events overflows the calendar day then render a +X More button at the bottom of the day that shows the number of events that overflow. And the number of events rendered will change as the browser resizes.
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-   parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-   },
-```
-
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+The game is deloyed on netlify with this [link](https://joy-googlecalendar-react-ts.netlify.app/).
