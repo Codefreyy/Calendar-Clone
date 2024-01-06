@@ -6,4 +6,12 @@ A calendar application similar to Google Calendar. Each day grid has a + button 
 
 If the number of events overflows the calendar day then render a +X More button at the bottom of the day that shows the number of events that overflow. And the number of events rendered will change as the browser resizes.
 
-The game is deloyed on netlify with this [link](https://joy-googlecalendar-react-ts.netlify.app/).
+## Run this app
+```
+git clone https://github.com/Codefreyy/Calendar-Clone.git
+npm i
+npm run dev
+```
+
+The app is deloyed on netlify with this [link](https://joy-googlecalendar-react-ts.netlify.app/).
+
